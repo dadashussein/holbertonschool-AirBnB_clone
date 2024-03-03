@@ -100,6 +100,9 @@ class SysConsole(cmd.Cmd):
             elif command.startswith('show'):
                 instance_id = command.split('\"')[1]
                 self.do_show(class_name + ' ' + instance_id)
+            elif command.startswith('destroy'):
+                instance_id = command.split('\"')[1]
+                self.do_destroy(class_name + ' ' + instance_id)
         else:
             print("*** Unknown syntax: %s" % line)
 
