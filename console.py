@@ -95,8 +95,18 @@ class SysConsole(cmd.Cmd):
             command = args[1]
             if command == 'all()':
                 self.do_all(class_name)
+            elif command == 'count()':
+                self.do_count(class_name)
         else:
             print("*** Unknown syntax: %s" % line)
+
+    def do_count(self, arg):
+        """Count instances"""
+        count = 0
+        for key in storage.all().keys():
+            if arg in key:
+                count += 1
+        print(count)
 
     def do_update(self, arg):
         """Update att"""
