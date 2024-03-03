@@ -88,7 +88,7 @@ class SysConsole(cmd.Cmd):
             print("** class doesn't exist **")
 
     def default(self, line):
-        """Method retrieve all instances"""
+        """Method default"""
         if '.' in line:
             args = line.split('.')
             class_name = args[0]
@@ -97,6 +97,9 @@ class SysConsole(cmd.Cmd):
                 self.do_all(class_name)
             elif command == 'count()':
                 self.do_count(class_name)
+            elif command.startswith('show'):
+                instance_id = command.split('\"')[1]
+                self.do_show(class_name + ' ' + instance_id)
         else:
             print("*** Unknown syntax: %s" % line)
 
