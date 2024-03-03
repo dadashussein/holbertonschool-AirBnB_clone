@@ -103,6 +103,10 @@ class SysConsole(cmd.Cmd):
             elif command.startswith('destroy'):
                 instance_id = command.split('\"')[1]
                 self.do_destroy(class_name + ' ' + instance_id)
+            elif command.startswith('update'):
+                instance_id = command.split('\"')[1]
+                command = command.split('\"')[2]
+                self.do_update(class_name + ' ' + instance_id + ' ' + command)
         else:
             print("*** Unknown syntax: %s" % line)
 
@@ -133,7 +137,14 @@ class SysConsole(cmd.Cmd):
                 instance = storage.all()[key]
                 attribute_name = lines[2]
                 attribute_value = lines[3]
-                setattr(instance, attribute_name, attribute_value)
+                if attribute_value.isdigit():
+                    setattr(instance, attribute_name, int(attribute_value))
+                elif attribute_value.replace('.', '', 1).isdigit():
+                    setattr(instance, attribute_name, float(attribute_value))
+                else:
+                    attribute_value = attribute_value.strip('\"')
+                    setattr(instance, attribute_name, str(attribute_value))
+                instance.save()
             else:
                 print("** no instance found **")
 
