@@ -105,8 +105,10 @@ class SysConsole(cmd.Cmd):
                 self.do_destroy(class_name + ' ' + instance_id)
             elif command.startswith('update'):
                 instance_id = command.split('\"')[1]
-                command = command.split('\"')[2]
-                self.do_update(class_name + ' ' + instance_id + ' ' + command)
+                instance_key = command.split('\"')[3]
+                instance_value = command.split()[-1].rstrip(')\"')
+                self.do_update(class_name + ' ' + instance_id + ' ' +
+                               instance_key + ' ' + instance_value)
         else:
             print("*** Unknown syntax: %s" % line)
 
