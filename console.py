@@ -87,6 +87,17 @@ class SysConsole(cmd.Cmd):
         else:
             print("** class doesn't exist **")
 
+    def default(self, line):
+        """Method retrieve all instances"""
+        if '.' in line:
+            args = line.split('.')
+            class_name = args[0]
+            command = args[1]
+            if command == 'all()':
+                self.do_all(class_name)
+        else:
+            print("*** Unknown syntax: %s" % line)
+
     def do_update(self, arg):
         """Update att"""
         lines = arg.split(" ")
