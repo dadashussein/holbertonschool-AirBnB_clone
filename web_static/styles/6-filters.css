@@ -5,7 +5,6 @@
     border: 1px solid #DDDDDD;
     border-radius: 4px;
     display: flex;
-    justify-content: sp;
     align-items: center;
     position: relative;
 }
@@ -20,6 +19,7 @@
     border-radius: 4px;
     right: 30px;
     position: absolute;
+    cursor: pointer;
 }
 
 .filters button:hover {
@@ -30,6 +30,7 @@
 .amenities {
     height: 100%;
     width: 25%;
+    cursor: pointer;
 }
 
 .locations {
@@ -47,4 +48,24 @@
     font-weight: 400;
     font-size: 14px;
     margin: 2px 40px;
+}
+
+.popover {
+    display: none;
+    width: 100%;
+    list-style-type: none;
+    border: 1px solid #DDDDDD;
+    background-color: #FAFAFA;
+}
+
+.popover li {
+    padding: 8px 40px;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.locations:hover .popover,
+.amenities:hover .popover {
+    display: block;
+
 }
