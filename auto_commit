@@ -1,0 +1,9 @@
+#!/bin/bash
+git checkout web-statik-dev
+git add web_static/
+git commit -m "automated commit by shell"
+git checkout master
+git merge web-statik-dev
+git pull origin master
+git push origin master
+git checkout web-statik-dev
