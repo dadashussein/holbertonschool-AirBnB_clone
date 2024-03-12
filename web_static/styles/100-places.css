@@ -80,3 +80,61 @@
     background-image: url(../images/icon_bath.png);
     height: 80px;
 }
+
+/* amenitiees */
+.places .amenities {
+    margin-top: 40px;
+    width: 100%;
+}
+
+.places .amenities h2 {
+    font-size: 16px;
+    border-bottom: 1px solid #DDDDDD;
+    text-align: start;
+}
+
+
+.places .amenities ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.places .amenities li {
+    display: flex;
+    height: 50px;
+    align-items: center;
+    gap: 4px;
+}
+
+.ameniti_pet img {
+    width: 30px;
+    height: 30px;
+}
+
+.ameniti_tv img {
+    width: 30px;
+    height: 30px;
+}
+
+.ameniti_wifi img {
+    width: 30px;
+    height: 30px;
+}
+
+
+/* place reviews */
+
+.places .reviews {
+    margin-top: 40px;
+}
+
+.places .reviews h2 {
+    font-size: 16px;
+    border-bottom: 1px solid #DDDDDD;
+    text-align: start;
+}
+
+.places .reviews ul {
+    list-style-type: none;
+    padding: 0;
+}
