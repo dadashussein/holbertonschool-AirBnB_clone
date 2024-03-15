@@ -1,7 +1,11 @@
-
 /* Reset */
 * {
     box-sizing: border-box;
+}
+
+:root {
+    --main-color: #FF5A5F;
+    --font-family: 'Circular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
 body {
@@ -9,10 +13,21 @@ body {
     padding: 0;
     color: #484848;
     font-size: 14px;
-    font-family: Circular, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: var(--font-family);
 }
 
 .container {
     max-width: 1000px;
     margin: 30px auto;
+}
+
+
+/* for small device */
+
+@media (max-width: 768px) {
+    .container {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+    }
 }
