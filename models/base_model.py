@@ -2,7 +2,6 @@
 """Base class"""
 import uuid
 from datetime import datetime
-import models
 
 
 class BaseModel:
@@ -15,18 +14,20 @@ class BaseModel:
                 if key != "__class__":
                     setattr(self, key, value)
         else:
+            from models import storage
             self.id = str(uuid.uuid4())
             self.created_at = datetime.now()
             self.updated_at = datetime.now()
-            models.storage.new(self)
+            storage.new(self)
 
     def __str__(self):
         return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
 
     def save(self):
         """Updates updated attr"""
+        from models import storage
         self.updated_at = datetime.now()
-        models.storage.save()
+        storage.save()
 
     def to_dict(self):
         """Returns dic containing all keys/values"""

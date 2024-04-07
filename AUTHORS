@@ -1,8 +1,8 @@
 # AirBnB clone authors: 
 # - Dadash Huseynzade
-# - Elvin Allahverdiyev
+
 
 # This is the main file for the AirBnB clone project. It contains authors and version information.
 
-__version__ = '1.0's
+__version__ = '2.0's
 

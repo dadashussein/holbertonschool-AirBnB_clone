@@ -1,13 +1,6 @@
 #!/usr/bin/python3
 """FileStorage class"""
 import json
-from models.amenity import Amenity
-from models.base_model import BaseModel
-from models.city import City
-from models.place import Place
-from models.review import Review
-from models.state import State
-from models.user import User
 
 
 class FileStorage:
@@ -23,7 +16,13 @@ class FileStorage:
     def objects(self, value):
         self.__objects = value
 
-    def all(self):
+    def all(self, cls=None):
+        if cls:
+            temp = {}
+            for key, value in self.__objects.items():
+                if cls.__name__ in key:
+                    temp[key] = value
+            return temp
         return self.__objects
 
     def new(self, obj):
@@ -41,11 +40,36 @@ class FileStorage:
 
     def reload(self):
         """ Reload objects from file"""
+        from models.base_model import BaseModel
+        from models.user import User
+        from models.place import Place
+        from models.state import State
+        from models.city import City
+        from models.amenity import Amenity
+        from models.review import Review
+
+        classes = {
+        "BaseModel": BaseModel,
+        "User": User,
+        "State": State,
+        "City": City,
+        "Amenity": Amenity,
+        "Place": Place,
+        "Review": Review
+        }
         try:
+            temp = {}
             with open(self.__file_path, "r") as file:
-                file_content = file.read()
-            des_object = json.loads(file_content)
-            for key, value in des_object.items():
-                self.__objects[key] = eval(value["__class__"])(**value)
-        except Exception:
+                temp = json.load(file)
+                for key, value in temp.items():
+                    self.all()[key] = classes[value['__class__']](**value)
+        except FileNotFoundError:
             pass
+
+    def delete(self, obj=None):
+        """Delete object instance"""
+        if obj:
+            key = obj.__class__.__name__ + '.' + obj.id
+            if key in self.all():
+                del self.all()[key]
+            self.save()

@@ -2,7 +2,7 @@
 """Console module"""
 import cmd
 from models.base_model import BaseModel
-from models import storage
+from models.__init__ import storage
 from models.user import User
 from models.city import City
 from models.state import State
@@ -22,7 +22,7 @@ class SysConsole(cmd.Cmd):
         "Amenity": Amenity,
         "Place": Place,
         "Review": Review
-        }
+    }
 
     def do_quit(self, arg):
         """Quit command to exit program"""
@@ -41,31 +41,31 @@ class SysConsole(cmd.Cmd):
         """Empty line"""
         pass
 
-    def do_create(self, arg):
-        """Create object any class"""
-        if not arg:
+    def do_create(self, args):
+        """Create an object of any class with given parameters"""
+        args = args.split()
+        if not args:
             print("** class name missing **")
             return
-        kwargs_dict = {}
-        class_name = arg.split()[0]
-        params = arg.split()[1:]
-        if class_name not in self.__classes:
+        elif args[0] not in self.__classes:
             print("** class doesn't exist **")
             return
-        for param in params:
-            key, value = param.split("=")
-            try:
+        class_name = args[0]
+        new_instance = self.__classes[class_name]()
+        for arg in args[1:]:
+            if "=" not in arg:
+                continue
+            key, value = arg.split("=", 1)
+            if value[0] == value[-1] == '"':
+                value = value[1:-1].replace('_', ' ').replace('\\', '"')
+            elif '.' in value:
+                value = float(value)
+            else:
                 value = int(value)
-            except ValueError:
-                try:
-                    value = float(value)
-                except ValueError:
-                    value = " ".join(value.strip('"').split("_"))
-            kwargs_dict[key] = value
-
-        new_instance = self.__classes[class_name](**kwargs_dict)
+            setattr(new_instance, key, value)
+        storage.save()
         print(new_instance.id)
-        new_instance.save()
+        storage.save()
 
     def do_show(self, arg):
         """Show model with id"""
