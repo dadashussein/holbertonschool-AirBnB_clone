@@ -14,71 +14,109 @@ from models.review import Review
 class SysConsole(cmd.Cmd):
     """Console class"""
     prompt = '(hbnb) '
-    __classes = ["BaseModel", "User", "State",
-                 "City", "Amenity", "Place", "Review"]
+    __classes = {
+        "BaseModel": BaseModel,
+        "User": User,
+        "State": State,
+        "City": City,
+        "Amenity": Amenity,
+        "Place": Place,
+        "Review": Review
+        }
 
     def do_quit(self, arg):
         """Quit command to exit program"""
-        return True
+        exit()
 
     def do_EOF(self, arg):
         """EOF command to exit program"""
-        return True
+        print()
+        exit()
 
     def do_help(self, arg):
         """Help command"""
         return super().do_help(arg)
 
-    def emptyline(self) -> bool:
+    def emptyline(self):
         """Empty line"""
-        return False
+        pass
 
     def do_create(self, arg):
-        """Create command"""
+        """Create object any class"""
         if not arg:
             print("** class name missing **")
-        elif arg not in self.__classes:
+            return
+        kwargs_dict = {}
+        class_name = arg.split()[0]
+        params = arg.split()[1:]
+        if class_name not in self.__classes:
             print("** class doesn't exist **")
-        else:
-            new = eval(arg)()
-            new.save()
-            print(new.id)
+            return
+        for param in params:
+            key, value = param.split("=")
+            try:
+                value = int(value)
+            except ValueError:
+                try:
+                    value = float(value)
+                except ValueError:
+                    value = " ".join(value.strip('"').split("_"))
+            kwargs_dict[key] = value
+
+        new_instance = self.__classes[class_name](**kwargs_dict)
+        print(new_instance.id)
+        new_instance.save()
 
     def do_show(self, arg):
         """Show model with id"""
-        lines = arg.split(" ")
-        if not arg:
+        lines = arg.partition(" ")
+        c_name = lines[0]
+        c_id = lines[2]
+        if not c_name:
             print("** class name missing **")
-        elif lines[0] not in self.__classes:
+            return
+
+        if c_name not in self.__classes:
             print("** class doesn't exist **")
-        elif len(lines) < 2:
+            return
+
+        if not c_id:
             print("** instance id missing **")
-        else:
-            key = lines[0] + "." + lines[1]
-            if key in storage.all():
-                print(storage.all()[key])
-            else:
-                print("** no instance found **")
+            return
+
+        key = c_name + "." + c_id
+        try:
+            print(storage._FileStorage__objects[key])
+        except KeyError:
+            print("** no instance found **")
 
     def do_destroy(self, arg):
-        """Destroy instance"""
-        lines = arg.split(" ")
-        if not arg:
+        """Destroy specified object"""
+        lines = arg.partition(" ")
+        c_name = lines[0]
+        c_id = lines[2]
+        if not c_name:
             print("** class name missing **")
-        elif lines[0] not in self.__classes:
+            return
+
+        if c_name not in self.__classes:
             print("** class doesn't exist **")
-        elif len(lines) < 2:
+            return
+
+        if not c_id:
             print("** instance id missing **")
-        else:
-            key = lines[0] + "." + lines[1]
-            if key in storage.all():
-                del storage.all()[key]
-                storage.save()
-            else:
-                print("** no instance found **")
+            return
+
+        key = c_name + "." + c_id
+
+        try:
+            del storage.all()[key]
+            storage.save()
+        except KeyError:
+            print("** no instance found **")
 
     def do_all(self, arg):
-        """Print all string repr"""
+        """Show all objects"""
         if not arg:
             print([str(value) for value in storage.all().values()])
         elif arg in self.__classes:
@@ -88,37 +126,15 @@ class SysConsole(cmd.Cmd):
             print("** class doesn't exist **")
 
     def default(self, line):
-        """Method default"""
+        """Method retrieve all instances"""
         if '.' in line:
             args = line.split('.')
             class_name = args[0]
             command = args[1]
             if command == 'all()':
                 self.do_all(class_name)
-            elif command == 'count()':
-                self.do_count(class_name)
-            elif command.startswith('show'):
-                instance_id = command.split('\"')[1]
-                self.do_show(class_name + ' ' + instance_id)
-            elif command.startswith('destroy'):
-                instance_id = command.split('\"')[1]
-                self.do_destroy(class_name + ' ' + instance_id)
-            elif command.startswith('update'):
-                instance_id = command.split('\"')[1]
-                instance_key = command.split('\"')[3]
-                instance_value = command.split()[-1].rstrip(')\"')
-                self.do_update(class_name + ' ' + instance_id + ' ' +
-                               instance_key + ' ' + instance_value)
         else:
             print("*** Unknown syntax: %s" % line)
-
-    def do_count(self, arg):
-        """Count instances"""
-        count = 0
-        for key in storage.all().keys():
-            if arg in key:
-                count += 1
-        print(count)
 
     def do_update(self, arg):
         """Update att"""
@@ -135,18 +151,13 @@ class SysConsole(cmd.Cmd):
             print("** value missing **")
         else:
             key = lines[0] + "." + lines[1]
+            print(key)
             if key in storage.all():
                 instance = storage.all()[key]
                 attribute_name = lines[2]
                 attribute_value = lines[3]
-                if attribute_value.isdigit():
-                    setattr(instance, attribute_name, int(attribute_value))
-                elif attribute_value.replace('.', '', 1).isdigit():
-                    setattr(instance, attribute_name, float(attribute_value))
-                else:
-                    attribute_value = attribute_value.strip('\"')
-                    setattr(instance, attribute_name, str(attribute_value))
-                instance.save()
+                setattr(instance, attribute_name, attribute_value)
+                storage.save()
             else:
                 print("** no instance found **")
 
